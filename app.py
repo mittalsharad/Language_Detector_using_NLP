@@ -13,16 +13,20 @@ import numpy as np
 import pickle 
 import streamlit as st
 from PIL import Image
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import LabelEncoder
 
+#label encoder
+le = LabelEncoder()
 
+#Pickled model
 pickle_in=open('language_predictor.pkl','rb')
 language_predictor=pickle.load(pickle_in)
 
+#Count vectorizer
 cv_pickle=open('vectorize.pkl','rb')
 cv=pickle.load(cv_pickle)
 
-le_pickle=open('encoder.pkl','rb')
-le=pickle.load(le_pickle)
               
 def lang_predict(text):
      x = cv.transform([text]).toarray() # converting text to bag of words model (Vector)
