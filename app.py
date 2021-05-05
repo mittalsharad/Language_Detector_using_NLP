@@ -3,14 +3,13 @@
 """
 Created on Tue May  4 15:26:34 2021
 
-@author: sharad
+@author: sharad mittal
 """
 
-
-from flask import Flask,request
 import pandas as pd
 import numpy as np
 import pickle 
+import re
 import streamlit as st
 from PIL import Image
 from sklearn.feature_extraction.text import CountVectorizer
@@ -29,10 +28,24 @@ cv=pickle.load(cv_pickle)
 
               
 def lang_predict(text):
-     x = cv.transform([text]).toarray() # converting text to bag of words model (Vector)
-     lang = language_predictor.predict(x) # predicting the language
-     lang = le.inverse_transform(lang) # finding the language corresponding the the predicted value
-     return lang[0] # return the predicted language
+     # loading the dataset
+     data = pd.read_csv("Language Detection.csv")
+     y = data["Language"]
+     # label encoding
+     y = le.fit_transform(y)
+     #Cleaning the input text
+     text = re.sub(r'[!@#$(),\n"%^*?\:;~`0-9]','', text)
+     text = re.sub(r'[[]]', '', text)
+     text = text.lower()
+     data = [text]
+     # converting text to bag of words model (Vector)
+     x = cv.transform(data).toarray() 
+     # predicting the language
+     lang = language_predictor.predict(x)
+     # finding the language corresponding the the predicted value
+     lang = le.inverse_transform(lang) 
+     # return the predicted language
+     return lang[0] 
 
 def main():
     st.title("Language Predictor")
